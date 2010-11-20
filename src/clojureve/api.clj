@@ -15,23 +15,22 @@
 		  (str k "=" v))
 		params)))))
 
+(defn- exec-call [uri]
+  (http/stream (http/http-agent uri)))
+
 (defn- anonymous-call [uri]
-  (http/stream
-   (http/http-agent
-    (make-url uri))))
+  (exec-call (make-url uri)))
 
 (defn- account-call [uri user-id api-key]
-  (http/stream
-   (http/http-agent
-    (make-url uri {"userId" user-id
-		   "apiKey" api-key}))))
+  (exec-call
+   (make-url uri {"userId" user-id
+		  "apiKey" api-key})))
 
 (defn- character-call [uri user-id api-key character-id]
-  (http/stream
-   (http/http-agent
-    (make-url uri {"userId" user-id
-		   "apiKey" api-key
-		   "characterId" character-id}))))
+  (exec-call
+   (make-url uri {"userId" user-id
+		  "apiKey" api-key
+		  "characterId" character-id})))
 
 ;; Anonymous calls. These are all no-args functions.
 (def server-status
@@ -87,10 +86,31 @@
 
 
 ;; Optional param beforeKillId
-(def kill-log)
+(defn kill-log
+  ([user-id api-key character-id]
+     (exec-call
+      (make-url "/char/KillLog.xml.aspx"
+		{"userId" user-id
+		 "apiKey" api-key
+		 "characterId" character-id})))
+  ([user-id api-key character-id before-kill-id]
+     (exec-call
+      (make-url "/char/KillLog.xml.aspx"
+		{"userId" user-id
+		 "apiKey" api-key
+		 "characterId" character-id
+		 "beforeKillId" before-kill-id}))))
 
 ;; ids param - comma separated list of messageIds from MailMessages.
-(def mail-bodies)
+(defn mail-bodies
+  [user-id api-key character-id message-ids]
+  (let [message-ids-param (clojure.string/join "," message-ids)]
+    (exec-call
+     (make-url "/char/MailBodies.xml.aspx"
+	       {"userId" user-id
+		"apiKey" api-key
+		"characterId" character-id
+		"messageIds" message-ids-param}))))
 
 ;; beforeRefId - used to walk the journal backwards in time.
 (def wallet-journal)
