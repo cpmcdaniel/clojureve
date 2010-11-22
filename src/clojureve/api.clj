@@ -39,6 +39,37 @@
      (partial anonymous-call "/eve/AllianceList.xml.aspx"))
 (def certificate-tree
      (partial anonymous-call "/eve/CertificateTree.xml.aspx"))
+(def conquerable-station-list
+     (partial anonymous-call "/eve/ConquerableStationList.xml.aspx"))
+(def error-list
+     (partial anonymous-call "/eve/ErrorList.xml.aspx"))
+(def faction-war-top-stats
+     (partial anonymous-call "/eve/FacWarTopStats.xml.aspx"))
+(def ref-types
+     (partial anonymous-call "/eve/RefTypes.xml.aspx"))
+(def skill-tree
+     (partial anonymous-call "/eve/SkillTree.xml.aspx"))
+(def faction-war-systems
+     (partial anonymous-call "/map/FacWarSystems.xml.aspx"))
+(def jumps
+     (partial anonymous-call "/map/Jumps.xml.aspx"))
+(def kills
+     (partial anonymous-call "/map/Kills.xml.aspx"))
+(def sovereignty
+     (partial anonymous-call "/map/Sovereignty.xml.aspx"))
+
+(defn character-id [ & names ]
+  (exec-call
+   (make-url "/eve/CharacterID.xml.aspx"
+	     ;; TODO - encode each name.
+	     {:names (clojure.string/join "," names)})))
+
+(defn character-name [ & ids ]
+  (exec-call
+   (make-url "/eve/CharacterName.xml.aspx"
+	     {:ids (clojure.string/join "," ids)})))
+
+
 
 ;; Account calls.
 (def character-list
@@ -59,8 +90,6 @@
      (partial character-call "/char/ContactList.xml.aspx"))
 (def contact-notifications
      (partial character-call "/char/ContactNotifications.xmlaspx"))
-(def factional-warfare-stats
-     (partial character-call "/char/FacWarStats.xml.aspx"))
 (def industry-jobs
      (partial character-call "/char/IndustryJobs.xml.aspx"))
 (def mailing-lists
@@ -84,15 +113,27 @@
 (def upcoming-calendar-events
      (partial character-call "/char/UpcomingCalendarEvents.xml.aspx"))
 
+(defn character-info
+  ([character-id]
+     (exec-call
+      (make-url "/eve/CharacterInfo.xml.aspx"
+		{"characterId" character-id})))
+  ([user-id api-key character-id]
+     (character-call "/eve/CharacterInfo.xml.aspx"
+		     user-id api-key character-id)))
+
+(defn factional-war-stats
+  ([] (anonymous-call "/eve/FacWarStats.xml.aspx"))
+  ([user-id api-key character-id]
+     (character-call "/char/FacWarStats.xml.aspx"
+		     user-id api-key character-id)))
+
 
 ;; Optional param beforeKillId
 (defn kill-log
   ([user-id api-key character-id]
-     (exec-call
-      (make-url "/char/KillLog.xml.aspx"
-		{"userId" user-id
-		 "apiKey" api-key
-		 "characterId" character-id})))
+     (character-call "/char/KillLog.xml.aspx"
+		     user-id api-key character-id))
   ([user-id api-key character-id before-kill-id]
      (exec-call
       (make-url "/char/KillLog.xml.aspx"
@@ -113,11 +154,123 @@
 		"messageIds" message-ids-param}))))
 
 ;; beforeRefId - used to walk the journal backwards in time.
-(def wallet-journal)
+(defn wallet-journal
+  ([user-id api-key character-id]
+     (character-call "/char/WalletJournal.xml.aspx"
+		     user-id api-key character-id))
+  ([user-id api-key character-id before-ref-id]
+     (exec-call
+      (make-url "/char/WalletJournal.xml.aspx"
+		{"userId" user-id
+		 "apiKey" api-key
+		 "characterId" character-id
+		 "beforeRefId" before-ref-id}))))
 
 ;; beforeTransId - see wallet-journal about "walking".
-(def wallet-transactions)
-
+(defn wallet-transactions
+  ([user-id api-key character-id]
+     (character-call "/char/WalletTransactions.xml.aspx"
+		     user-id api-key character-id))
+  ([user-id api-key character-id before-trans-id]
+     (exec-call
+      (make-url "/char/WalletTransactions.xml.aspx"
+		{"userId" user-id
+		 "apiKey" api-key
+		 "characterId" character-id
+		 "beforeTransId" before-trans-id}))))
 
 
 ;; Corporation calls.
+(def corp-account-balance
+     (partial character-call "/corp/AccountBalance.xml.aspx"))
+(def corp-asset-list
+     (partial character-call "/corp/AssetList.xml.aspx"))
+(def corp-calendar-event-attendees
+     (partial character-call "/corp/CalendarEventAtendees.xml.aspx"))
+(def corp-contact-list
+     (partial character-call "/corp/ContactList.xml.aspx"))
+(def corp-container-log
+     (partial character-call "/corp/ContainerLog.xml.aspx"))
+(def corp-faction-war-stats
+     (partial character-call "/corp/FacWarStats.xml.aspx"))
+(def corp-industry-jobs
+     (partial character-call "/corp/IndustryJobs.xml.aspx"))
+(def corp-kill-log
+     (partial character-call "/corp/KillLog.xml.aspx"))
+(def corp-market-orders
+     (partial character-call "/corp/MarketOrders.xml.aspx"))
+(def corp-medals
+     (partial character-call "/corp/Medals.xml.aspx"))
+(def corp-member-medals
+     (partial character-call "/corp/MemberMedals.xml.aspx"))
+(def corp-member-security
+     (partial character-call "/corp/MemberSecurity.xml.aspx"))
+(def corp-member-security-log
+     (partial character-call "/corp/MemberSecurityLog.xml.aspx"))
+(def corp-member-tracking
+     (partial character-call "/corp/MemberTracking.xml.aspx"))
+(def corp-standings
+     (partial character-call "/corp/Standings.xml.aspx"))
+(def corp-outpost-list
+     (partial character-call "/corp/OutpostList.xml.aspx"))
+(def corp-outpost-service-detail
+     (partial character-call "/corp/OutpostServiceDetail.xml.aspx"))
+(def corp-starbase-list
+     (partial character-call "/corp/StarbaseList.xml.aspx"))
+(def corp-shareholders
+     (partial character-call "/corp/Shareholders.xml.aspx"))
+(def corp-titles
+     (partial character-call "/corp/Titles.xml.aspx"))
+
+(defn corp-wallet-journal
+  ([user-id api-key character-id account-key]
+     (exec-call
+      (make-url "/corp/WalletJournal.xml.aspx"
+		{"userId" user-id
+		 "apiKey" api-key
+		 "accountKey" account-key
+		 "characterId" character-id})))
+  ([user-id api-key character-id account-key before-ref-id]
+     (exec-call
+      (make-url "/corp/WalletJournal.xml.aspx"
+		{"userId" user-id
+		 "apiKey" api-key
+		 "characterId" character-id
+		 "accountKey" account-key
+		 "beforeRefId" before-ref-id}))))
+
+(defn corp-wallet-transactions
+  ([user-id api-key character-id account-key]
+     (exec-call
+      (make-url "/corp/WalletTransactions.xml.aspx"
+		{"userId" user-id
+		 "apiKey" api-key
+		 "accountKey" account-key	
+		 "characterId" character-id})))
+  ([user-id api-key character-id account-key before-trans-id]
+     (exec-call
+      (make-url "/corp/WalletTransactions.xml.aspx"
+		{"userId" user-id
+		 "apiKey" api-key
+		 "characterId" character-id
+		 "accountKey" account-key
+		 "beforeTransId" before-trans-id}))))
+
+(defn corporation-sheet
+  ([corporation-id]
+     (exec-call
+      (make-url "/corp/CorporationSheet.xml.aspx"
+		{"corporationId" corporation-id})))
+  ([user-id api-key character-id]
+     (character-call "/corp/CorporationSheet.xml.aspx"
+		     user-id api-key character-id)))
+
+(defn corp-starbase-detail
+  [user-id api-key character-id item-id]
+  (exec-call
+   (make-url "/char/StarbaseDetail.xml.aspx"
+	     {"userId" user-id
+	      "apiKey" api-key
+	      "characterId" character-id
+	      "itemId" item-id})))
+
