@@ -73,7 +73,7 @@
 
 ;; Account calls.
 (def character-list
-     (partial account-call "/account/CharacterList.xml.aspx"))
+     (partial account-call "/account/Characters.xml.aspx"))
 (def account-status
      (partial account-call "/account/AccountStatus.xml.aspx"))
 
