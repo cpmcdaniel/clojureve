@@ -1,0 +1,4 @@
+* Use :handler method in http-agent call to avoid pulling response completely into memory.
+* Call (stream agent) in the handler method. This will utilize HttpURLConnection's underlying input stream.
+* Wrap the stream with parse-trim from the lazy-xml library. The handler may return this lazy sequence itself, or extract the interesting bits and return that.
+* The caller will get an agent and need to call (result agent). This will return the results from the handler method.
