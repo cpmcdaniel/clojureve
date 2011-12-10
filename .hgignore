@@ -2,3 +2,6 @@
 .*jar
 lib
 classes
+target
+data
+.lein-failures
