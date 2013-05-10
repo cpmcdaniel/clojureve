@@ -1,12 +1,13 @@
 (defproject clojureve "1.0.0-SNAPSHOT"
   :description "A Clojure wrapper for the Eve Online API"
-  :dependencies [[org.clojure/clojure "1.2.1"]
-                 [org.clojure/clojure-contrib "1.2.0"]
+  :dependencies [[org.clojure/clojure "1.5.1"]
 		 [org.apache.camel/camel-http "2.5.0"]
                  [mysql/mysql-connector-java "5.1.18"]
-                 [compojure "0.6.5"]
-                 [hiccup "0.3.7"]]
-  :dev-dependencies [[swank-clojure "1.3.2"]
-                     [lein-ring "0.4.6"]]
+                 [compojure "1.1.5"]
+                 [hiccup "1.0.3"]
+                 [org.zmq/jzmq "3.2.2"]]
+  :dev-dependencies [[lein-ring "0.8.5"]]
+  :native-path "/usr/lib"
   :ring {:handler clojureve.core/app}
-  :main clojureve.main)
+  :main clojureve.main
+  :aot [clojureve.main])

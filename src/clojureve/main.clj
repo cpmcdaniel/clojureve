@@ -1,6 +1,8 @@
 (ns clojureve.main
-  (:use [clojureve.setup :as setup ])
-  (:gen-class))
+  (:gen-class)
+  (:require [clojureve.zeromq :as zmq]))
+
+#_(:use [clojureve.setup :as setup ])
 
 (defn -main [& args]
-  (setup/init-db))
+  (zmq/example))
