@@ -3,6 +3,7 @@
   :dependencies [[org.clojure/clojure "1.5.1"]
 		 [org.apache.camel/camel-http "2.5.0"]
                  [mysql/mysql-connector-java "5.1.18"]
+                 [clj-http "0.7.2"]
                  [compojure "1.1.5"]
                  [hiccup "1.0.3"]
                  [org.zmq/jzmq "3.2.2"]]

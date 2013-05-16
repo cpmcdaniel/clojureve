@@ -1,0 +1,10 @@
+# set default behavior, in case users don't have core.autocrlf set.
+* text=auto
+
+*.clj text
+*.cljs text
+*.md text
+*.xml text
+*.org text
+*.html text
+*.py text

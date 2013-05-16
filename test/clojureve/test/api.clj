@@ -3,16 +3,24 @@
   (:use [clojureve.api] :reload)
   (:use [clojure.test]))
 
+(defn check-status [f]
+  (binding [*api-server* "http://api.testeveonline.com"]
+        (is (= 200 (:status (f))))))
 
-(deftest url-construction
-  (is (= "http://api.eve-online.com/eve/SkillTree.xml.aspx"
-	 (make-url "/eve/SkillTree.xml.aspx"))
-      "make-url failed for parameter-less call")
-  (is (= "http://api.eve-online.com/account/Characters.xml.aspx?userId=jim&apiKey=ak"
-	 (make-url "/account/Characters.xml.aspx" {"userId" "jim" "apiKey" "ak"}))
-      "make-url failed for call with parameters"))
+(deftest test-make-url
+  (is (= (str *api-server* "/foo") (make-url "/foo"))))
 
+(deftest ^:integration test-server-status
+  (check-status server-status))
 
+(deftest ^:integration test-alliance-list
+  (check-status alliance-list))
+
+(deftest ^:integration test-certificate-tree
+  (check-status certificate-tree))
+
+(deftest ^:integration test-certificate-tree
+  (check-status certificate-tree))
 
 
 
