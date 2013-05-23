@@ -10,5 +10,10 @@
   :dev-dependencies [[lein-ring "0.8.5"]]
   :native-path "/usr/lib"
   :ring {:handler clojureve.core/app}
-  :main clojureve.main
-  :aot [clojureve.main])
+  ;:main clojureve.main
+  ;:aot [clojureve.main]
+
+
+  :test-selectors {:default (complement :integration)
+                   :integration :integration
+                   :all (constantly true)} )
