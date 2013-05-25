@@ -1,8 +1,14 @@
 (ns clojureve.api
   (:require [clj-http.client :as http]
-            [clojure.string :refer [join]]))
+            [clojure.string :refer [join]]
+            [clojure.data.xml :refer [parse]]))
 
-(def ^:dynamic *api-server* "http://api.eveonline.com")
+(def ^:dynamic *api-server* "https://api.eveonline.com")
+
+(defn body-seq [{:keys [body]}]
+  (if body
+    (xml-seq (parse body))
+    '()))
 
 (defn make-url
   "Construct API URLs."

@@ -1,6 +1,7 @@
 (defproject clojureve "1.0.0-SNAPSHOT"
   :description "A Clojure wrapper for the Eve Online API"
   :dependencies [[org.clojure/clojure "1.5.1"]
+                 [org.clojure/data.xml "0.0.7"]
 		 [org.apache.camel/camel-http "2.5.0"]
                  [mysql/mysql-connector-java "5.1.18"]
                  [clj-http "0.7.2"]
