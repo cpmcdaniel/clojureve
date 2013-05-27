@@ -1,7 +1,8 @@
 (ns clojureve.test.api
   (:require [clojure.xml :as xml]
             [clojure.java.io :as io]
-            [clojure.test :refer [use-fixtures deftest is run-tests]])
+            [clojure.test :refer [use-fixtures deftest is run-tests]]
+            [clojureve.test.test-util :refer [load-api-key]])
   (:use [clojureve.api]
         [clojureve.api-util])
   (:import [clojureve.api ApiKey]))
@@ -75,13 +76,6 @@
          #{"Jennitar" "RycheOn"}))))
 
 ;; Account calls
-;; For this to work, you will need to create a api.edn file in
-;; the project test directory. The file should contain a single
-;; map:
-;; {:keyID "xxxxx" :vCode "yyyyy"}
-;; This key should have FULL api access.
-(defn load-api-key []
-  (read-string (slurp "test/api.edn")))
 
 (deftest ^:integration test-character-list
   (doseq [row (extract-rows
