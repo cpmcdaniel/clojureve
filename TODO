@@ -1,4 +1,3 @@
-* Update to use clj-http
 * Redesign API to utilize a map for the API key and params (since they all simply get added as POST params anyway).
 * Update eve static data (load into datomic?)
 

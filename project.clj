@@ -14,7 +14,6 @@
   ;:main clojureve.main
   ;:aot [clojureve.main]
 
-
   :test-selectors {:default (complement :integration)
                    :integration :integration
                    :all (constantly true)} )

@@ -1,14 +1,10 @@
 (ns clojureve.api
   (:require [clj-http.client :as http]
-            [clojure.string :refer [join]]
-            [clojure.data.xml :refer [parse]]))
+            [clojure.string :refer [join]]))
 
 (def ^:dynamic *api-server* "https://api.eveonline.com")
 
-(defn body-seq [{:keys [body]}]
-  (if body
-    (xml-seq (parse body))
-    '()))
+(defrecord ApiKey [keyID vCode])
 
 (defn make-url
   "Construct API URLs."
@@ -250,82 +246,4 @@
   (exec-call "/char/StarbaseDetail.xml.aspx"
              (assoc params "itemId" item-id)))
 
-
-;;;;;;;;;;;;;;; Alternate Implementation ;;;;;;;;;;;;;;;;;;
-
-(def key-types #{:none :limited :full})
-(def cache-styles #{:short :long :modified-short})
-
-(defprotocol ApiCall
-  "Defines the protocol for calling the Eve API."
-  (api-call [x params] "Call this API service with the supplied parameters."))
-
-(defn sort-params [params]
-  (into (sorted-map) params))
-
-(defrecord ApiCallDefinition
-  [category
-   name
-   uri
-   key-type
-   cache-style
-   required-params
-   optional-params
-   doc]
-  ApiCall
-  (api-call
-   [x params]
-    (exec-call uri (sort-params params))))
-
-(def account-params (sorted-set "userID" "apiKey"))
-(def character-params (conj account-params "characterID"))
-
-(def
- call-definitions
- (let [defs
-       [
-	(ApiCallDefinition.
-	 "Account"
-	 "Characters"
-	 "/account/Characters.xml.aspx"
-	 :limited
-	 :short
-	 account-params
-	 nil
-	 "Returns a list of all characters on an account.")
-  
-	(ApiCallDefinition.
-	 "Account"
-	 "Account Status"
-	 "/account/AccountStatus.xml.aspx"
-	 :full
-	 :short
-	 account-params
-	 nil
-	 "Returns basic account information including when the subscription lapses, total play time in minutes, total times logged on and date of account creation. In the case of game time code accounts it will also look for available offers of time codes. ")
-
-	(ApiCallDefinition.
-	 "Character"
-	 "Market Orders"
-	 "/char/MarketOrders.xml.aspx"
-	 :full
-	 :long
-	 character-params
-	 nil
-	 "Returns a list of market orders for your character.")
-
-	;; An example with optional params.
-	(ApiCallDefinition.
-	 "Character"
-	 "Wallet Journal"
-	 "/char/WalletJournal.xml.aspx"
-	 :full
-	 :modified-short
-	 character-params
-	 (sorted-set "fromId" "rowCount")
-	 "Returns a list of journal transactions for character.")
-
-  
-	]]
-   (into {} (for [d defs] [(:name d) d]))))
 
