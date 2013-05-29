@@ -15,4 +15,9 @@
       (is (not (nil? (:characterID char-key))))
       (is (= 3 (count char-key))))))
 
+(comment
+  (character-list (load-api-key))
+  )
+
 #_(run-tests)
+

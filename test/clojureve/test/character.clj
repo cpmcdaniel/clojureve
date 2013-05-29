@@ -32,9 +32,27 @@
   ;; may not have any orders.
   (is (seq? (market-orders *char-key*))))
 
+(deftest ^:integration test-wallet-journal
+  (let [journal-entries (wallet-journal *char-key*)]
+    (is (seq? journal-entries))
+    (when (> (count journal-entries) 6)
+      (is (= 4 (count (wallet-journal
+                       (assoc *char-key*
+                         :fromID (:refID (nth journal-entries 1))
+                         :rowCount 4))))))))
+
+(deftest ^:integration test-wallet-transactions
+  (let [transactions (wallet-transactions *char-key*)]
+    (is (seq? transactions))
+    (when (> (count transactions) 6)
+      (is (= 4 (count (wallet-transactions
+                       (assoc *char-key*
+                         :fromID (:refID (nth transactions 1))
+                         :rowCount 4))))))))
+
 (comment
   (binding [*char-key* (first (character-keys (load-api-key)))]
-    (clojure.pprint/pprint (market-orders *char-key*)))
+    (clojure.pprint/pprint (count (wallet-journal *char-key*))))
   )
 
 #_(run-tests)
