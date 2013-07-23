@@ -2,15 +2,12 @@
   (:require [clojure.xml :as xml]
             [clojure.java.io :as io]
             [clojure.test :refer [use-fixtures deftest is run-tests]]
-            [clojureve.test.test-util :refer [load-api-key]])
-  (:use [clojureve.api]
-        [clojureve.api-util])
+            [clojureve.test.test-util :refer [load-api-key]]
+            [clojureve.api :refer :all]
+            [clojureve.api-util :refer :all])
   (:import [clojureve.api ApiKey]))
 
-(use-fixtures
- :each (fn [t]
-         (binding [*api-server* "https://api.testeveonline.com"]
-           (t))))
+(def server "https://api.testeveonline.com")
 
 (defn inspect-body [istream]
   (doseq [line (take 20 (line-seq (io/reader istream)))]
@@ -21,54 +18,50 @@
     (is (= 200 (:status response)))
     response))
 
-(deftest test-make-url
-  (is (= (str *api-server* "/foo") (make-url "/foo"))))
-
-
 ;; Anonymous calls
 (deftest ^:integration test-server-status
-  (check-status server-status))
+  (check-status #(server-status server)))
 
 (deftest ^:integration test-alliance-list
-  (check-status alliance-list))
+  (check-status #(alliance-list server)))
 
 (deftest ^:integration test-certificate-tree
-  (check-status certificate-tree))
+  (check-status #(certificate-tree server)))
 
 (deftest ^:integration test-error-list
-  (check-status error-list))
+  (check-status #(error-list server)))
 
 (deftest ^:integration test-conquerable-station-list
-  (check-status conquerable-station-list))
+  (check-status #(conquerable-station-list server)))
 
 (deftest ^:integration test-faction-war-top-stats
-  (check-status faction-war-top-stats))
+  (check-status #(faction-war-top-stats server)))
 
 (deftest ^:integration test-ref-types
-  (check-status ref-types))
+  (check-status #(ref-types server)))
 
 (deftest ^:integration test-skill-tree
-  (check-status skill-tree))
+  (check-status #(skill-tree server)))
 
 (deftest ^:integration test-faction-war-systems
-  (check-status faction-war-systems))
+  (check-status #(faction-war-systems server)))
 
 (deftest ^:integration test-jumps
-  (check-status jumps))
+  (check-status #(jumps server)))
 
 (deftest ^:integration test-kills
-  (check-status kills))
+  (check-status #(kills server)))
 
 (deftest ^:integration test-sovereignty
-  (check-status sovereignty))
+  (check-status #(sovereignty server)))
 
 (deftest ^:integration test-character-id
-  (let [response (check-status #(character-id "Xygoo" "Jennitar" "RycheOn"))]
+  (let [response (check-status #(character-id server "Xygoo" "Jennitar" "RycheOn"))]
     (doseq [row (extract-rows response)]
       (is (not (nil? (:characterID row)))))))
 
 (deftest ^:integration test-character-name
-  (let [response (check-status #(character-name 326142676 437036885))]
+  (let [response (check-status #(character-name server 326142676 437036885))]
     (is (= (->> response
               extract-rows
               (map :name)
@@ -80,7 +73,7 @@
 (deftest ^:integration test-character-list
   (doseq [row (extract-rows
                (check-status
-                #(character-list (load-api-key))))]
+                #(character-list server (load-api-key))))]
     (is (not (nil? (:characterID row))))
     (is (not (nil? (:name row))))
     (is (not (nil? (:corporationID row))))
@@ -89,7 +82,7 @@
 (deftest ^:integration test-account-status
   (is (not
        (nil?
-        (->> (account-status (load-api-key))
+        (->> (account-status server (load-api-key))
              body-seq
              (tag-filter :createDate)
              first
