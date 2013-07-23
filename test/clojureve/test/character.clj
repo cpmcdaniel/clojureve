@@ -6,20 +6,23 @@
 
 (def ^:dynamic *char-key* nil)
 
+(def server "https://api.testeveonline.com")
+
 (use-fixtures :once
   (fn [t]
     (binding [*char-key*
-              (first (character-keys (load-api-key)))]
+              (first (character-keys server (load-api-key)))]
       (t))))
 
 (deftest ^:integration test-account-balance
-  (let [balance (account-balance *char-key*)]
+  (let [balance (account-balance server *char-key*)]
     (is (not (nil? (:accountID balance))))
     (is (not (nil? (:accountKey balance))))
     (is (not (nil? (:balance balance))))))
 
+
 (deftest ^:integration test-asset-list
-  (doseq [asset (asset-list *char-key*)]
+  (doseq [asset (asset-list server *char-key*)]
     (is (:itemID asset))
     (is (:locationID asset))
     (when (:content asset)
@@ -30,10 +33,10 @@
 (deftest ^:integration test-market-orders
   ;; This is all we can do, because the account used
   ;; may not have any orders.
-  (is (seq? (market-orders *char-key*))))
+  (is (seq? (market-orders server *char-key*))))
 
 (deftest ^:integration test-wallet-journal
-  (let [journal-entries (wallet-journal *char-key*)]
+  (let [journal-entries (wallet-journal server *char-key*)]
     (is (seq? journal-entries))
     (when (> (count journal-entries) 6)
       (is (= 4 (count (wallet-journal
@@ -42,7 +45,7 @@
                          :rowCount 4))))))))
 
 (deftest ^:integration test-wallet-transactions
-  (let [transactions (wallet-transactions *char-key*)]
+  (let [transactions (wallet-transactions server *char-key*)]
     (is (seq? transactions))
     (when (> (count transactions) 6)
       (is (= 4 (count (wallet-transactions
@@ -51,8 +54,8 @@
                          :rowCount 4))))))))
 
 (comment
-  (binding [*char-key* (first (character-keys (load-api-key)))]
-    (clojure.pprint/pprint (count (wallet-journal *char-key*))))
+  (binding [*char-key* (first (character-keys server (load-api-key)))]
+    (clojure.pprint/pprint (count (wallet-journal server *char-key*))))
   )
 
 #_(run-tests)
